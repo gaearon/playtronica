@@ -1,4 +1,12 @@
 import React from 'react';
-import { App } from './App';
+import { render } from 'react-dom';
+import App from './App';
 
-React.render(<App />, document.getElementById('root'));
+render(<App />, document.getElementById('root'));
+
+if (module.hot) {
+  module.hot.accept('./App', () => {
+    let NextApp = require('./App');
+    render(<NextApp />, document.getElementById('root'));
+  });
+}
