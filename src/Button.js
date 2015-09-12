@@ -22,7 +22,7 @@ export default class Button extends Component {
     updateSound: PropTypes.func.isRequired
   };
 
-  handleClick(e) {
+  handleMouseDown(e) {
     if (!this.props.isLocked) {
       return;
     }
@@ -57,7 +57,7 @@ export default class Button extends Component {
     const { char, isLocked, color } = this.props;
     const accentColor = color ? 'white' : '#222';
     return (
-      <div onClick={::this.handleClick}>
+      <div onMouseDown={::this.handleMouseDown}>
         <Center position='relative'
                 width='8rem'
                 height='8rem'
