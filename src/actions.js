@@ -6,26 +6,52 @@ export const REMOVE = 'REMOVE';
 export const TOGGLE_LOCK = 'TOGGLE_LOCK';
 export const SET_COLOR = 'SET_COLOR';
 
-let urlCache = {};
-
-function getCachedUrl(char, cb) {
-  if (urlCache[char]) {
-    cb(urlCache[char]);
-  } else {
-    get(char, (file) => {
-      const url = window.URL.createObjectURL(file);
-      urlCache[char] = url;
-      cb(url);
-    });
+let cachedFiles = {};
+function getCachedFile(char, cb) {
+  if (cachedFiles[char]) {
+    return cb(cachedFiles[char]);
   }
+  get(char, (file) => {
+    cachedFiles[char] = file;
+    return cb(file);
+  });
+}
+function removeCachedFile(char) {
+  delete cachedFiles[char];
 }
 
-function removeCachedUrl(char) {
-  const url = urlCache[char];
-  if (url) {
-    window.URL.revokeObjectURL(url);
-    delete urlCache[char];
+let cachedBuffers = {};
+function getCachedBuffer(char, cb) {
+  if (cachedBuffers[char]) {
+    return cb(cachedBuffers[char]);
   }
+  getCachedFile(char, file => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      audioContext.decodeAudioData(reader.result, buffer => {
+        cachedBuffers[char] = buffer;
+        return cb(buffer);
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+function removeCachedBuffer(char) {
+  removeCachedFile(char);
+  delete cachedBuffers[char];
+}
+
+let audioContext = new AudioContext();
+let playingSources = {};
+function playSource(char, buffer) {
+  if (playingSources[char]) {
+    playingSources[char].stop();
+  }
+
+  const source = playingSources[char] = audioContext.createBufferSource();
+  source.buffer = buffer;
+  source.connect(audioContext.destination);
+  source.start();
 }
 
 export function play(char) {
@@ -40,7 +66,7 @@ export function play(char) {
     }
 
     if (getState().colors[char]) {
-      getCachedUrl(char, url => new Audio(url).play());
+      getCachedBuffer(char, buffer => playSource(char, buffer));
     }
 
     dispatch({ type: PLAY, char });
@@ -57,14 +83,14 @@ function setColor(char, color) {
 
 export function updateSound(char, file) {
   return dispatch => put(char, file, () => {
-    removeCachedUrl(char);
+    removeCachedBuffer(char);
     dispatch(setColor(char, colorFromFile(file)));
   });
 }
 
 export function remove(char) {
   return dispatch => del(char, (file) => {
-    removeCachedUrl(char);
+    removeCachedBuffer(char);
     dispatch({ type: REMOVE, char });
   });
 }
