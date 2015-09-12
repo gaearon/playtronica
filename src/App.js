@@ -38,7 +38,7 @@ class App extends Component {
     return (
       <Block fontFamily='Helvetica, Arial, sans-serif'>
         <Center width='100vw' height='100vh'>
-          {pressedChars.length > 0 &&
+          {Object.keys(colors).some(char => colors[char]) && pressedChars.length > 0 &&
             <Block position='absolute'
                    right='1rem'
                    top='1rem'>
