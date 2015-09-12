@@ -29,6 +29,10 @@ export default class Button extends Component {
     this.props.onDeleteClick(this.props.char);
   }
 
+  handleInputChange(e) {
+    console.info(e.target.files);
+  }
+
   render() {
     const { char, isLocked } = this.props;
     return (
@@ -43,6 +47,22 @@ export default class Button extends Component {
                 fontWeight='bold'
                 borderRadius={16}>
           {char}
+          {!isLocked &&
+            <input type='file'
+                   onChange={this.handleInputChange}
+                   accept='audio/mpeg'
+                   style={{
+                     position: 'absolute',
+                     top: 0,
+                     left: 0,
+                     right: 0,
+                     bottom: 0,
+                     opacity: 0,
+                     width: '100%',
+                     height: '100%',
+                     cursor: 'pointer'
+                   }} />
+          }
           {!isLocked &&
             <DeleteButton onClick={::this.handleDeleteClick} />
           }

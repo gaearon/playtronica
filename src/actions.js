@@ -6,7 +6,11 @@ export function play(char) {
   return (dispatch, getState) => {
     const { isLocked, pressedChars } = getState();
     if (isLocked && pressedChars.indexOf(char) === -1) {
-      return;
+      if (pressedChars.length === 0) {
+        dispatch(toggleLock());
+      } else {
+        return;
+      }
     }
 
     return dispatch({
