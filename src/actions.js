@@ -6,6 +6,21 @@ export const REMOVE = 'REMOVE';
 export const TOGGLE_LOCK = 'TOGGLE_LOCK';
 export const SET_COLOR = 'SET_COLOR';
 
+let objectUrls = {};
+
+function playSound(char) {
+  get(char, (file) => {
+    if (objectUrls[char]) {
+      window.URL.revokeObjectURL(objectUrls[char])
+    }
+
+    const url = objectUrls[char] = window.URL.createObjectURL(file);
+    const audio = new Audio();
+    audio.src = url;
+    audio.play();
+  });
+}
+
 export function play(char) {
   return (dispatch, getState) => {
     const { isLocked, pressedChars } = getState();
@@ -17,7 +32,11 @@ export function play(char) {
       }
     }
 
-    return dispatch({ type: PLAY, char });
+    if (getState().colors[char]) {
+      playSound(char);
+    }
+
+    dispatch({ type: PLAY, char });
   };
 }
 
@@ -27,12 +46,6 @@ export function toggleLock() {
 
 function setColor(char, color) {
   return { type: SET_COLOR, char, color };
-}
-
-export function loadSound(char) {
-  return dispatch => get(char, (file) =>
-    dispatch(setColor(char, colorFromFile(file)))
-  );
 }
 
 export function updateSound(char, file) {

@@ -19,8 +19,7 @@ export default class Button extends Component {
     onClick: PropTypes.func.isRequired,
     onDeleteClick: PropTypes.func.isRequired,
     color: PropTypes.string,
-    updateSound: PropTypes.func.isRequired,
-    loadSound: PropTypes.func.isRequired
+    updateSound: PropTypes.func.isRequired
   };
 
   handleClick(e) {
@@ -47,11 +46,11 @@ export default class Button extends Component {
     }
 
     const file = e.target.files[0];
-    this.props.updateSound(this.props.char, file);
-  }
+    if (!file) {
+      return;
+    }
 
-  componentDidMount() {
-    this.props.loadSound(this.props.char);
+    this.props.updateSound(this.props.char, file);
   }
 
   render() {

@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Block, Flex } from 'jsxstyle';
 import { connect } from 'react-redux';
-import { play, remove, toggleLock, loadSound, updateSound } from './actions';
+import { play, remove, toggleLock, updateSound } from './actions';
 import Button from './Button';
 import Center from './Center';
 
@@ -32,7 +32,7 @@ class App extends Component {
 
   render() {
     const {
-      play, remove, toggleLock, loadSound, updateSound,
+      play, remove, toggleLock, updateSound,
       pressedChars, isLocked, colors
     } = this.props;
     return (
@@ -54,7 +54,6 @@ class App extends Component {
                         char={char}
                         onClick={play}
                         onDeleteClick={remove}
-                        loadSound={loadSound}
                         updateSound={updateSound}
                         isLocked={isLocked}
                         color={colors[char]} /> :
@@ -84,6 +83,5 @@ export default connect(mapStateToProps, {
   play,
   remove,
   toggleLock,
-  loadSound,
   updateSound
 })(App);

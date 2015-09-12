@@ -1,10 +1,11 @@
-const dbVersion = 1;
+const dbVersion = 2;
 const request = window.indexedDB.open('playtronica', dbVersion);
 
 let waiting = [];
 let db;
 
 request.onupgradeneeded = (e) => {
+  e.target.result.deleteObjectStore('sounds');
   e.target.result.createObjectStore('sounds');
 };
 
@@ -41,7 +42,7 @@ export function del(key, cb) {
 export function get(key, cb) {
   wait(() => {
     const transaction = db.transaction(['sounds'], 'readonly');
-    return transaction.objectStore('sounds').get(key);
+    const request = transaction.objectStore('sounds').get(key);
     request.onsuccess = () => cb(request.result);
   });
 }
