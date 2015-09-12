@@ -5,7 +5,9 @@ let waiting = [];
 let db;
 
 request.onupgradeneeded = (e) => {
-  e.target.result.deleteObjectStore('sounds');
+  try {
+    e.target.result.deleteObjectStore('sounds');
+  } catch (err) { }
   e.target.result.createObjectStore('sounds');
 };
 
