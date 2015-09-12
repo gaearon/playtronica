@@ -1,34 +1,13 @@
 {
-  "name": "react-transform-boilerplate",
+  "name": "playtronica",
   "version": "0.1.0",
-  "description": "A new Webpack boilerplate with hot reloading React components, and error handling on module and component level.",
+  "description": "A side project for a friend",
   "scripts": {
     "start": "node server.js",
-    "lint": "eslint src"
+    "build": "NODE_ENV=production webpack --config webpack.config.production.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gaearon/react-transform-boilerplate.git"
-  },
-  "keywords": [
-    "react",
-    "reactjs",
-    "boilerplate",
-    "hot",
-    "reload",
-    "hmr",
-    "live",
-    "edit",
-    "webpack",
-    "babel",
-    "react-transform"
-  ],
   "author": "Dan Abramov <dan.abramov@me.com> (http://github.com/gaearon)",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/gaearon/react-transform-boilerplate/issues"
-  },
-  "homepage": "https://github.com/gaearon/react-transform-boilerplate",
   "devDependencies": {
     "babel-core": "^5.4.7",
     "babel-eslint": "^3.1.9",

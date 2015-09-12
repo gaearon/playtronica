@@ -3,14 +3,15 @@ import { render } from 'react-dom';
 import App from './App';
 import reducer from './reducers';
 import { createStore, applyMiddleware, compose } from 'redux';
-import createLogger from 'redux-logger';
 import thunk from 'redux-thunk';
 import persistState from 'redux-localstorage';
 import { Provider } from 'react-redux';
 
-const logger = createLogger();
+const middleware = process.env.NODE_ENV === 'production' ?
+  [thunk] :
+  [thunk, require('redux-logger')()];
 const finalCreateStore = compose(
-  applyMiddleware(thunk, logger),
+  applyMiddleware(...middleware),
   persistState()
 )(createStore);
 const store = finalCreateStore(reducer);
