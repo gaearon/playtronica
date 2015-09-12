@@ -3,9 +3,16 @@ export const REMOVE = 'REMOVE';
 export const TOGGLE_LOCK = 'TOGGLE_LOCK';
 
 export function play(char) {
-  return {
-    type: PLAY,
-    char
+  return (dispatch, getState) => {
+    const { isLocked, pressedChars } = getState();
+    if (isLocked && pressedChars.indexOf(char) === -1) {
+      return;
+    }
+
+    return dispatch({
+      type: PLAY,
+      char
+    });
   };
 }
 

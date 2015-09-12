@@ -5,6 +5,13 @@ import { play, remove, toggleLock } from './actions';
 import Button from './Button';
 import Center from './Center';
 
+function preventDefaultAnd(handler) {
+  return (e) => {
+    e.preventDefault();
+    handler(e);
+  };
+}
+
 class App extends Component {
   componentDidMount() {
     const { play } = this.props;
@@ -34,7 +41,7 @@ class App extends Component {
           <Block position='absolute'
                  right='1rem'
                  top='1rem'>
-            <a href='#' onClick={toggleLock}>
+            <a href='#' onClick={preventDefaultAnd(toggleLock)}>
               {isLocked ? 'Edit' : 'Done'}
             </a>
           </Block>
