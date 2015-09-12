@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Block, Flex } from 'jsxstyle';
 import { connect } from 'react-redux';
-import { play, remove, toggleLock } from './actions';
+import { play, remove, toggleLock, loadSound, updateSound } from './actions';
 import Button from './Button';
 import Center from './Center';
 
@@ -32,8 +32,8 @@ class App extends Component {
 
   render() {
     const {
-      play, remove, toggleLock,
-      pressedChars, isLocked
+      play, remove, toggleLock, loadSound, updateSound,
+      pressedChars, isLocked, colors
     } = this.props;
     return (
       <Block fontFamily='Helvetica, Arial, sans-serif'>
@@ -49,11 +49,16 @@ class App extends Component {
           }
           <Center>
             {pressedChars.map((char, index) =>
-              <Button key={char}
-                      char={char}
-                      onClick={play}
-                      onDeleteClick={remove}
-                      isLocked={isLocked} />
+              (!isLocked || colors[char]) ?
+                <Button key={char}
+                        char={char}
+                        onClick={play}
+                        onDeleteClick={remove}
+                        loadSound={loadSound}
+                        updateSound={updateSound}
+                        isLocked={isLocked}
+                        color={colors[char]} /> :
+                null
             )}
             {pressedChars.length === 0 &&
               <h1>
@@ -70,12 +75,15 @@ class App extends Component {
 function mapStateToProps(state) {
   return {
     pressedChars: state.pressedChars,
-    isLocked: state.isLocked
+    isLocked: state.isLocked,
+    colors: state.colors
   };
 }
 
 export default connect(mapStateToProps, {
   play,
   remove,
-  toggleLock
+  toggleLock,
+  loadSound,
+  updateSound
 })(App);
