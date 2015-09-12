@@ -6,19 +6,26 @@ export const REMOVE = 'REMOVE';
 export const TOGGLE_LOCK = 'TOGGLE_LOCK';
 export const SET_COLOR = 'SET_COLOR';
 
-let objectUrls = {};
+let urlCache = {};
 
-function playSound(char) {
-  get(char, (file) => {
-    if (objectUrls[char]) {
-      window.URL.revokeObjectURL(objectUrls[char])
-    }
+function getCachedUrl(char, cb) {
+  if (urlCache[char]) {
+    cb(urlCache[char]);
+  } else {
+    get(char, (file) => {
+      const url = window.URL.createObjectURL(file);
+      urlCache[char] = url;
+      cb(url);
+    });
+  }
+}
 
-    const url = objectUrls[char] = window.URL.createObjectURL(file);
-    const audio = new Audio();
-    audio.src = url;
-    audio.play();
-  });
+function removeCachedUrl(char) {
+  const url = urlCache[char];
+  if (url) {
+    window.URL.revokeObjectURL(url);
+    delete urlCache[char];
+  }
 }
 
 export function play(char) {
@@ -33,7 +40,7 @@ export function play(char) {
     }
 
     if (getState().colors[char]) {
-      playSound(char);
+      getCachedUrl(char, url => new Audio(url).play());
     }
 
     dispatch({ type: PLAY, char });
@@ -49,13 +56,15 @@ function setColor(char, color) {
 }
 
 export function updateSound(char, file) {
-  return dispatch => put(char, file, () =>
-    dispatch(setColor(char, colorFromFile(file)))
-  );
+  return dispatch => put(char, file, () => {
+    removeCachedUrl(char);
+    dispatch(setColor(char, colorFromFile(file)));
+  });
 }
 
 export function remove(char) {
-  return dispatch => del(char, (file) =>
-    dispatch({ type: REMOVE, char })
-  );
+  return dispatch => del(char, (file) => {
+    removeCachedUrl(char);
+    dispatch({ type: REMOVE, char });
+  });
 }
